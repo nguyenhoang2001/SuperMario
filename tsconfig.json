@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "CommonJS",
+    "sourceMap": true,
+    "strict": true,
+    "esModuleInterop": true,                  
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "noImplicitAny": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}
