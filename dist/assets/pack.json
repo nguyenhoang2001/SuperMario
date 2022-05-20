@@ -1,0 +1,76 @@
+{
+    "preload": {
+      "files": [
+        {
+          "type": "tilemapTiledJSON",
+          "key": "superMario",
+          "url": "./assets/maps/superMario.json"
+        },
+        {
+          "type": "image",
+          "key": "tiles",
+          "url": "./assets/tiles/tiles.png"
+        },
+        {
+          "type": "json",
+          "key": "animationJSON",
+          "url": "./assets/animations/animations.json"
+        },
+        {
+          "type": "spritesheet",
+          "key": "mario",
+          "url": "./assets/sprites/mario.png",
+          "frameConfig": {
+            "frameWidth": 32,
+            "frameHeight": 32
+          }
+        },
+        {
+          "type": "spritesheet",
+          "key": "box",
+          "url": "./assets/sprites/box.png",
+          "frameConfig": {
+            "frameWidth": 32,
+            "frameHeight": 46
+          }
+        },
+        {
+          "type": "image",
+          "key": "brick",
+          "url": "./assets/images/brick.png",
+          "frameConfig": {
+            "frameWidth": 32,
+            "frameHeight": 32
+          }
+        },
+        {
+          "type": "spritesheet",
+          "key": "coin",
+          "url": "./assets/sprites/coin.png",
+          "frameConfig": {
+            "frameWidth": 16,
+            "frameHeight": 28
+          }
+        },
+        {
+          "type": "spritesheet",
+          "key": "goomba",
+          "url": "./assets/sprites/goomba.png",
+          "frameConfig": {
+            "frameWidth": 32,
+            "frameHeight": 32
+          }
+        },
+        {
+          "type": "image",
+          "key": "mushroom",
+          "url": "./assets/images/mushroom.png",
+          "frameConfig": {
+            "frameWidth": 32,
+            "frameHeight": 32
+          }
+        }
+      ]
+    }
+}
+  
