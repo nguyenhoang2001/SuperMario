@@ -170,6 +170,12 @@
                  "height":32,
                  "id":15,
                  "name":"box",
+                 "properties":[
+                        {
+                         "name":"content",
+                         "type":"string",
+                         "value":"mushroom"
+                        }],
                  "rotation":0,
                  "type":"box",
                  "visible":true,
@@ -192,6 +198,12 @@
                  "height":32,
                  "id":18,
                  "name":"box",
+                 "properties":[
+                        {
+                         "name":"content",
+                         "type":"string",
+                         "value":"coin"
+                        }],
                  "rotation":0,
                  "type":"box",
                  "visible":true,
@@ -225,6 +237,12 @@
                  "height":32,
                  "id":22,
                  "name":"box",
+                 "properties":[
+                        {
+                         "name":"content",
+                         "type":"string",
+                         "value":"coin"
+                        }],
                  "rotation":0,
                  "type":"box",
                  "visible":true,
@@ -236,6 +254,12 @@
                  "height":32,
                  "id":23,
                  "name":"box",
+                 "properties":[
+                        {
+                         "name":"content",
+                         "type":"string",
+                         "value":"coin"
+                        }],
                  "rotation":0,
                  "type":"box",
                  "visible":true,
@@ -291,6 +315,12 @@
                  "height":32,
                  "id":29,
                  "name":"box",
+                 "properties":[
+                        {
+                         "name":"content",
+                         "type":"string",
+                         "value":"mushroom"
+                        }],
                  "rotation":0,
                  "type":"box",
                  "visible":true,
@@ -302,6 +332,12 @@
                  "height":32,
                  "id":30,
                  "name":"box",
+                 "properties":[
+                        {
+                         "name":"content",
+                         "type":"string",
+                         "value":"mushroom"
+                        }],
                  "rotation":0,
                  "type":"box",
                  "visible":true,
@@ -489,6 +525,12 @@
                  "height":32,
                  "id":47,
                  "name":"box",
+                 "properties":[
+                        {
+                         "name":"content",
+                         "type":"string",
+                         "value":"coin"
+                        }],
                  "rotation":0,
                  "type":"box",
                  "visible":true,
@@ -555,6 +597,12 @@
                  "height":32,
                  "id":53,
                  "name":"box",
+                 "properties":[
+                        {
+                         "name":"content",
+                         "type":"string",
+                         "value":"coin"
+                        }],
                  "rotation":0,
                  "type":"box",
                  "visible":true,
@@ -566,6 +614,12 @@
                  "height":32,
                  "id":54,
                  "name":"box",
+                 "properties":[
+                        {
+                         "name":"content",
+                         "type":"string",
+                         "value":"coin"
+                        }],
                  "rotation":0,
                  "type":"box",
                  "visible":true,
@@ -577,6 +631,12 @@
                  "height":32,
                  "id":55,
                  "name":"box",
+                 "properties":[
+                        {
+                         "name":"content",
+                         "type":"string",
+                         "value":"coin"
+                        }],
                  "rotation":0,
                  "type":"box",
                  "visible":true,
@@ -588,6 +648,12 @@
                  "height":32,
                  "id":56,
                  "name":"box",
+                 "properties":[
+                        {
+                         "name":"content",
+                         "type":"string",
+                         "value":"mushroom"
+                        }],
                  "rotation":0,
                  "type":"box",
                  "visible":true,
@@ -665,6 +731,12 @@
                  "height":32,
                  "id":63,
                  "name":"box",
+                 "properties":[
+                        {
+                         "name":"content",
+                         "type":"string",
+                         "value":"coin"
+                        }],
                  "rotation":0,
                  "type":"box",
                  "visible":true,
@@ -676,6 +748,12 @@
                  "height":32,
                  "id":64,
                  "name":"box",
+                 "properties":[
+                        {
+                         "name":"content",
+                         "type":"string",
+                         "value":"coin"
+                        }],
                  "rotation":0,
                  "type":"box",
                  "visible":true,
@@ -742,12 +820,45 @@
                  "height":32,
                  "id":70,
                  "name":"box",
+                 "properties":[
+                        {
+                         "name":"content",
+                         "type":"string",
+                         "value":"coin"
+                        }],
                  "rotation":0,
                  "type":"box",
                  "visible":true,
                  "width":32,
                  "x":5760,
                  "y":640
+                }, 
+                {
+                 "height":96,
+                 "id":71,
+                 "name":"2",
+                 "properties":[
+                        {
+                         "name":"direction",
+                         "type":"string",
+                         "value":"down"
+                        }, 
+                        {
+                         "name":"marioSpawnX",
+                         "type":"int",
+                         "value":32
+                        }, 
+                        {
+                         "name":"marioSpawnY",
+                         "type":"int",
+                         "value":736
+                        }],
+                 "rotation":0,
+                 "type":"portal",
+                 "visible":true,
+                 "width":32,
+                 "x":7008,
+                 "y":672
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -756,7 +867,7 @@
          "y":0
         }],
  "nextlayerid":13,
- "nextobjectid":71,
+ "nextobjectid":72,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.8.5",
@@ -765,18 +876,73 @@
         {
          "firstgid":1,
          "columns":29,
-         "image":"../tiles/tiles.png",
-         "imageheight":907,
-         "imagewidth":956,
-         "margin":0,
-         "name":"tiles",
-         "spacing":1,
-         "tilecount":812,
-         "tiledversion":"1.8.5",
-         "tileheight":32,
-         "tilewidth":32,
-         "type":"tileset",
-         "version":"1.8"
+ "image":"../tiles/tiles.png",
+ "imageheight":907,
+ "imagewidth":956,
+ "margin":0,
+ "name":"tiles",
+ "spacing":1,
+ "tilecount":783,
+ "tiledversion":"1.8.5",
+ "tileheight":32,
+ "tiles":[
+        {
+         "id":0,
+         "properties":[
+                {
+                 "name":"collide",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":29,
+         "properties":[
+                {
+                 "name":"collide",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":232,
+         "properties":[
+                {
+                 "name":"collide",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":233,
+         "properties":[
+                {
+                 "name":"collide",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":261,
+         "properties":[
+                {
+                 "name":"collide",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":262,
+         "properties":[
+                {
+                 "name":"collide",
+                 "type":"bool",
+                 "value":true
+                }]
+        }],
+ "tilewidth":32,
+ "type":"tileset",
+ "version":"1.8"
         }],
  "tilewidth":32,
  "type":"map",

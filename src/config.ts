@@ -1,4 +1,6 @@
 import { BootScene } from "./scenes/BootScene";
+import { GameScene } from "./scenes/GameScene";
+import { MenuScene } from "./scenes/MenuScene";
 
 export const GameConfig: Phaser.Types.Core.GameConfig = {
   title: 'Super Mario',
@@ -21,6 +23,6 @@ export const GameConfig: Phaser.Types.Core.GameConfig = {
       debug: false
     }
   },
-  render: { antialias: false },
-  scene: [BootScene]
+  // render: { antialias: false },
+  scene: [BootScene,MenuScene,GameScene]
 };
