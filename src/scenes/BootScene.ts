@@ -45,7 +45,7 @@ export class BootScene extends Phaser.Scene {
     }
 
     update (time:number, delta:number): void {
-        this.scene.start('GameScene');
+        this.scene.start('MenuScene');
     }
 
     private createLoadingGraphics(): void {

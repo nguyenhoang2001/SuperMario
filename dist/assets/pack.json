@@ -2,8 +2,14 @@
     "preload": {
       "files": [
         {
+          "type": "bitmapFont",
+          "key": "font",
+          "textureURL": "./assets/font/superMarioLand.png",
+          "fontDataURL": "./assets/font/superMarioLand.fnt"
+        },
+        {
           "type": "tilemapTiledJSON",
-          "key": "superMario",
+          "key": "level1",
           "url": "./assets/maps/superMario.json"
         },
         {
@@ -22,7 +28,7 @@
           "url": "./assets/sprites/mario.png",
           "frameConfig": {
             "frameWidth": 32,
-            "frameHeight": 32
+            "frameHeight": 64
           }
         },
         {
@@ -31,7 +37,7 @@
           "url": "./assets/sprites/box.png",
           "frameConfig": {
             "frameWidth": 32,
-            "frameHeight": 46
+            "frameHeight": 32
           }
         },
         {

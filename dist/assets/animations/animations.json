@@ -12,6 +12,17 @@
         "frameRate": 18
       },
       {
+        "key": "bigMarioWalk",
+        "frames": {
+          "typeOfGeneration": "generateFrameNumbers",
+          "key": "mario",
+          "start": 5,
+          "end": 8
+        },
+        "repeat": -1,
+        "frameRate": 18
+      },
+      {
         "key": "goombaWalk",
         "frames": {
           "typeOfGeneration": "generateFrameNumbers",
@@ -31,7 +42,7 @@
           "end": 3
         },
         "repeat": -1,
-        "frameRate": 18
+        "frameRate": 9
       },
       {
         "key": "box",
@@ -39,7 +50,7 @@
           "typeOfGeneration": "generateFrameNumbers",
           "key": "box",
           "start": 0,
-          "end": 2
+          "end": 1
         },
         "repeat": -1,
         "frameRate": 18
