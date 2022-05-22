@@ -1,6 +1,7 @@
 export class MenuScene extends Phaser.Scene {
     private startKey!: Phaser.Input.Keyboard.Key;
     private bitmapTexts: Phaser.GameObjects.BitmapText[] = [];
+    private hitPlaySound!: Phaser.Sound.BaseSound;
   
     constructor() {
       super({
@@ -17,7 +18,6 @@ export class MenuScene extends Phaser.Scene {
     }
   
     create(): void {
-    //   this.add.image(0, 0, 'title').setOrigin(0, 0);
         this.cameras.main.setBackgroundColor(0xffffff);
         this.bitmapTexts.push(
             this.add.bitmapText(
@@ -28,11 +28,13 @@ export class MenuScene extends Phaser.Scene {
             25
             ).setOrigin(0.5)
         );
+      this.hitPlaySound = this.sound.add('hitButtonSound',{loop:false,volume:0.5});
     }
   
     update(): void {
       if (this.startKey.isDown) {
         //this.scene.start('HUDScene');
+        this.hitPlaySound.play();
         this.scene.start('GameScene');
         //this.scene.bringToTop('HUDScene');
       }

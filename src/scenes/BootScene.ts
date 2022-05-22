@@ -5,6 +5,7 @@ export class BootScene extends Phaser.Scene {
     // graphics
     private loadingBar!: Phaser.GameObjects.Graphics;
     private progressBar!: Phaser.GameObjects.Graphics;
+    private backgroundMusic!: Phaser.Sound.BaseSound;
 
     constructor() {
         super({
@@ -38,6 +39,7 @@ export class BootScene extends Phaser.Scene {
               );
               this.progressBar.destroy();
               this.loadingBar.destroy();
+              this.backgroundMusic = this.sound.add('backgroundMusic',{loop:true,volume:0.5});
             },
             this
           );
@@ -45,6 +47,7 @@ export class BootScene extends Phaser.Scene {
     }
 
     update (time:number, delta:number): void {
+        this.backgroundMusic.play();
         this.scene.start('MenuScene');
     }
 

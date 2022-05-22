@@ -40,6 +40,7 @@ export class Mario extends Phaser.GameObjects.Sprite {
             this.adjustPhysicBodyToBigSize();
         this.body.maxVelocity.x = 300;
         this.body.maxVelocity.y = 300;
+        this.body.setGravityY(150);
     }
 
     private adjustPhysicBodyToSmallSize(): void {
@@ -54,9 +55,11 @@ export class Mario extends Phaser.GameObjects.Sprite {
 
     public update(): void {
         if(!this.isDying) {
+          if (this.y > this.currentScene.sys.canvas.height) {
+            // mario fell into a hole
+            this.isDying = true;
+          }
             this.handleAnimations();
-        } else {
-
         }
         if (!this.isVulnerable) {
             if (this.vulnerableCounter > 0) {
@@ -107,6 +110,7 @@ export class Mario extends Phaser.GameObjects.Sprite {
           }
         }
     }
+
     public growMario(): void {
         this.marioSize = 'big';
         this.currentScene.registry.set('marioSize', 'big');
@@ -127,6 +131,10 @@ export class Mario extends Phaser.GameObjects.Sprite {
             ease: 'Power1',
             yoyo: true
         });
+    }
+
+    public getVulnerable(): boolean {
+      return this.isVulnerable;
     }
 
     public gotHit(): void {

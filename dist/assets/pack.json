@@ -75,6 +75,35 @@
             "frameWidth": 32,
             "frameHeight": 32
           }
+        },
+        {
+          "type": "image",
+          "key": "bullet",
+          "url": "./assets/images/bullet.png",
+          "frameConfig": {
+            "frameWidth": 9,
+            "frameHeight": 8
+          }
+        },
+        {
+          "type": "audio",
+          "key": "backgroundMusic",
+          "url": "./assets/music/backgroundMusic.mp3"
+        },
+        {
+          "type": "audio",
+          "key": "dingSound",
+          "url": "./assets/sfx/dingSound.mp3"
+        },
+        {
+          "type": "audio",
+          "key": "hitButtonSound",
+          "url": "./assets/sfx/hitButtonSound.mp3"
+        },
+        {
+          "type": "audio",
+          "key": "crowdSad",
+          "url": "./assets/sfx/crowdSad.mp3"
         }
       ]
     }

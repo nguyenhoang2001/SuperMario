@@ -24,7 +24,7 @@ export class BoxesManager {
             ease: 'Power0',
             yoyo: true,
             onComplete: () => {
-                box.active = false;
+                // box.active = false;
                 box.setFrame(1);
             }
         });

@@ -1,8 +1,12 @@
 import { Box } from "../objects/Box";
 import { BoxesManager } from "../objects/BoxesManager";
 import { Brick } from "../objects/Brick";
+import { Bullet } from "../objects/Bullet";
 import { Collectible } from "../objects/Collectible";
+import { EnemiesManager } from "../objects/EnemiesManager";
+import { Goomba } from "../objects/Goomba";
 import { Mario } from "../objects/Mario";
+import { MarioBulletsManager } from "../objects/MarioBulletsManager";
 import { Portal } from "../objects/Portal";
 
 export class GameScene extends Phaser.Scene {
@@ -11,17 +15,23 @@ export class GameScene extends Phaser.Scene {
     private tileset!: Phaser.Tilemaps.Tileset;
     private foreground!: Phaser.Tilemaps.TilemapLayer;
     private objectOnGround!: Phaser.Tilemaps.TilemapLayer;
-
-    // game objects
+    // Game objects
     private bricks!: Phaser.GameObjects.Group;
     private collectibles!: Phaser.GameObjects.Group;
-    private enemies!: Phaser.GameObjects.Group;
     private player!: Mario;
     private portals!: Phaser.GameObjects.Group;
     private boxesManager!: BoxesManager;
-
-    // input
+    private enemiesManager!: EnemiesManager;
+    private marioBulletsManager!: MarioBulletsManager;
+    // Input
     private keys!: Map<string, Phaser.Input.Keyboard.Key>;
+    // Game Sound
+    private endSound!: Phaser.Sound.BaseSound;
+    private coinSound!: Phaser.Sound.BaseSound;
+    // Variables
+    private lastShoot!: number;
+    private directionBullet!:number;
+    private allowShoot!: boolean;
 
     constructor() {
         super({
@@ -40,12 +50,16 @@ export class GameScene extends Phaser.Scene {
         this.createCollider();
         // CAMERA
         this.createCamera();
+        // SOUND
+        this.createSound();
+        // VARIABLES
+        this.createVariables();
     }
 
     update (time:number, delta:number): void {
         this.updatePlayer();
-        this.updateBoxes();
-        this.updateBricks();
+        this.updateEnemies();
+        this.updatePlayerBullets();
     }
 
     private updatePlayer() {
@@ -55,30 +69,17 @@ export class GameScene extends Phaser.Scene {
         } else {
             if (this.player.y > this.sys.canvas.height) {
                 this.scene.stop('GameScene');
-                // this.scene.stop('HUDScene');
                 this.scene.start('MenuScene');
             }
         }
     }
 
-    private updateBricks() {
-        this.bricks.children.each((_brick: Brick|any) => {
-            if(_brick.body.touching.down && this.player.body.touching.up) {
-                console.log('hit the brick');
-                if(this.player.marioSize === 'big')
-                    _brick.destroy();
-            }
-        }, this);
+    private updatePlayerBullets() {
+        this.marioBulletsManager.updateMarioBullets();
     }
 
-    private updateBoxes() {
-        this.boxesManager.boxes.children.each((_box: Box|any) => {
-            if(_box.body.touching.down && this.player.body.touching.up && _box.active) {
-                console.log('hit the box');
-                this.playerHitBox(_box);
-                //_box.active = false;
-            }
-        }, this);
+    private updateEnemies() {
+        this.enemiesManager.updateGoombas();
     }
 
     private addKey(key: string): Phaser.Input.Keyboard.Key {
@@ -90,7 +91,8 @@ export class GameScene extends Phaser.Scene {
             ['LEFT', this.addKey('LEFT')],
             ['RIGHT', this.addKey('RIGHT')],
             ['DOWN', this.addKey('DOWN')],
-            ['JUMP', this.addKey('UP')]
+            ['JUMP', this.addKey('UP')],
+            ['SHOOT', this.addKey('SPACE')]
         ]);
     }
 
@@ -110,12 +112,14 @@ export class GameScene extends Phaser.Scene {
 
     private createGameObjects(): void {
         this.portals = this.add.group({});
-        //this.boxes = this.add.group({});
         this.bricks = this.add.group({});
         this.collectibles = this.add.group({});
-        this.enemies = this.add.group({});
+        this.enemiesManager = new EnemiesManager();
+        this.enemiesManager.goombas = this.add.group({});
         this.boxesManager = new BoxesManager();
         this.boxesManager.boxes = this.add.group({});
+        this.marioBulletsManager = new MarioBulletsManager();
+        this.marioBulletsManager.bullets = this.add.group({});
         this.loadObjectsFromTilemap();
     }
 
@@ -133,9 +137,10 @@ export class GameScene extends Phaser.Scene {
     private createCollider(): void {
         this.physics.add.collider(this.player, this.foreground);
         this.physics.add.collider(this.player, this.objectOnGround);
-        this.physics.add.collider(this.player, this.bricks);
-
-        this.physics.add.collider(this.player, this.boxesManager.boxes);
+        this.enemiesCollision();
+        this.playerBoxesCollision();
+        this.playerBricksCollision();
+        this.playerGoombasCollision();
 
         this.physics.add.collider(
             this.player,
@@ -151,6 +156,94 @@ export class GameScene extends Phaser.Scene {
             undefined,
             this
         );
+    }
+
+    private createSound() {
+        this.endSound = this.sound.add('crowdSad',{loop:false,volume:0.5});
+        this.coinSound = this.sound.add('dingSound',{loop:false,volume:0.5});
+    }
+
+    private createVariables() {
+        this.lastShoot = 0;
+        this.directionBullet = 1;
+        this.allowShoot = true;
+    }
+
+    private enemiesCollision(): void {
+        this.enemiesManager.goombas.children.each((_goomba: any) => {
+            let goomba = _goomba as Goomba;
+            this.physics.add.collider(goomba,this.foreground);
+            this.physics.add.collider(goomba,this.objectOnGround);
+            this.enemiesBricksCollision(goomba);
+            this.enemiesBoxesCollision(goomba);
+        },this);
+    }
+
+    private enemiesBricksCollision(goomba:Goomba) {
+        this.bricks.children.each((_brick: any) => {
+            let brick = _brick as Brick;
+            this.physics.add.collider(goomba,brick);
+        }, this);
+    }
+
+    private enemiesBoxesCollision(goomba:Goomba) {
+        this.boxesManager.boxes.children.each((_box: any) => {
+            let box = _box as Box;
+            this.physics.add.collider(goomba,box);
+        }, this);
+    }
+
+    private playerBoxesCollision(): void {
+        this.boxesManager.boxes.children.each((_box: any) => {
+            let box = _box as Box;
+            this.physics.add.collider(
+                this.player,
+                box,
+                () => {
+                    if(box.body.touching.down && box.active) {
+                        console.log('hit the box');
+                        this.playerHitBox(box);
+                        box.active = false;
+                    }
+                },
+                undefined,
+                this
+            );
+        }, this);
+    }
+
+    private playerBricksCollision(): void {
+        this.bricks.children.each((_brick: any) => {
+            let brick = _brick as Brick;
+            this.physics.add.collider(
+                this.player,
+                brick,
+                () => {
+                    if(brick.body.touching.down) {
+                        console.log('hit the brick');
+                        if(this.player.marioSize === 'big')
+                            brick.destroy();
+                    }
+                },
+                undefined,
+                this
+            );
+        }, this);
+    }
+
+    private playerGoombasCollision(): void {
+        this.enemiesManager.goombas.children.each((_goomba: any) => {
+            let goomba = _goomba as Goomba;
+            this.physics.add.collider(
+                this.player,
+                goomba,
+                () => {
+                    this.handlePlayerEnemy(this.player,goomba);
+                },
+                undefined,
+                this
+            );
+        },this);
     }
 
     private loadObjectsFromTilemap(): void {
@@ -217,15 +310,16 @@ export class GameScene extends Phaser.Scene {
                 box.setBody();
                 this.add.existing(box);
             }
+            else if (object.type === 'goomba') {
+                let goomba = this.enemiesManager.addGoomba(this,object.x,object.y);
+                this.physics.world.enable(goomba);
+                goomba.setBody();
+                this.add.existing(goomba);
+            }
         });
     }
 
     private handleInputs() {
-        if (this.player.y > this.sys.canvas.height) {
-            // mario fell into a hole
-            this.player.isDying = true;
-        }
-    
         // evaluate if player is on the floor or on object
         // if neither of that, set the player to be jumping
         if (
@@ -238,9 +332,11 @@ export class GameScene extends Phaser.Scene {
         }
         // handle movements to left and right
         if (this.keys.get('RIGHT')?.isDown) {
+            this.directionBullet = 1;
             this.player.body.setVelocityX(200);
             this.player.setFlipX(false);
         } else if (this.keys.get('LEFT')?.isDown) {
+            this.directionBullet = -1;
             this.player.body.setVelocityX(-200);
             this.player.setFlipX(true);
         } else {
@@ -263,6 +359,73 @@ export class GameScene extends Phaser.Scene {
                 }
             }
         }
+
+        // handle shooting
+        if(this.keys.get('SHOOT')?.isDown ) {
+            if(this.time.now > this.lastShoot && this.allowShoot) {
+                let offsetY = 32;
+                if(this.player.marioSize === 'small') {
+                    offsetY = 48;
+                }
+                let bullet = this.marioBulletsManager.addBullet(
+                    this,
+                    this.player.x,
+                    this.player.y + offsetY,
+                    this.directionBullet*700
+                );
+                this.physics.world.enable(bullet);
+                bullet.setBody();
+                this.add.existing(bullet);
+                // collision for bullet
+                this.createBulletCollision(bullet);
+                this.bulletEnemiesCollision(bullet);
+                this.lastShoot = this.time.now + 20;
+                this.allowShoot = false;
+            }
+        }
+        if(this.keys.get('SHOOT')?.isUp && !this.allowShoot) {
+            this.allowShoot = true;
+        }
+    }
+
+    private createBulletCollision(bullet:Bullet) {
+        this.physics.add.collider(bullet,this.foreground,()=>{bullet.destroy();});
+        this.physics.add.collider(bullet,this.objectOnGround,()=>{bullet.destroy();});
+        this.bricks.children.each((_brick: any) => {
+            let brick = _brick as Brick;
+            this.physics.add.collider(bullet,brick,()=>{bullet.destroy();});
+        }, this);
+        this.boxesManager.boxes.children.each((_box: any) => {
+            let box = _box as Box;
+            this.physics.add.collider(bullet,box,()=>{bullet.destroy();});
+        }, this);
+    }
+
+    private bulletEnemiesCollision(bullet:Bullet) {
+        this.enemiesManager.goombas.children.each((_goomba: any) => {
+            let goomba = _goomba as Goomba;
+            this.physics.add.collider(
+                bullet,
+                goomba,
+                () => {
+                    bullet.destroy();
+                    goomba.gotHitFromBullet();
+                    this.registry.values.score += goomba.dyingScoreValue;
+                    this.events.emit('scoreChanged');
+                    this.enemiesManager.showAndAddScore(goomba);
+                    this.add.tween({
+                        targets: goomba,
+                        props: { alpha: 0 },
+                        duration: 1000,
+                        ease: 'Power0',
+                        yoyo: false,
+                        onComplete: function () {
+                            goomba.isDead();
+                        }
+                    });
+                }
+            )
+        },this);
     }
 
     private handlePlayerPortal(_player: any, _portal: any): void {
@@ -290,11 +453,17 @@ export class GameScene extends Phaser.Scene {
           this.scene.start('MenuScene');
         }
     }
+
     private handlePlayerCollectibles(_player: any, _collectible: any): void {
         let myPlayer = _player as Mario;
         let myCollectible = _collectible as Collectible;
         switch (_collectible.texture.key) {
           case 'flower': {
+            break;
+          }
+          case 'coin': {
+            this.coinSound.stop();
+            this.coinSound.play();
             break;
           }
           case 'mushroom': {
@@ -325,10 +494,11 @@ export class GameScene extends Phaser.Scene {
 
           switch (_box.getBoxContentString()) {
             case 'coin': {
+              this.coinSound.stop();
+              this.coinSound.play();
               this.boxesManager.tweenBoxContent(_box,{ y: _box.y - 40, alpha: 0 }, 700,() => {
                 _box.getContent().destroy();
               });
-
               this.registry.values.coins += 1;
               this.events.emit('coinsChanged');
               this.registry.values.score += 100;
@@ -346,4 +516,30 @@ export class GameScene extends Phaser.Scene {
           this.boxesManager.startHitTimeline(_box);
         }
     }
+
+    private handlePlayerEnemy(_player: Mario, _enemy: Goomba): void {
+        if (_player.body.touching.down && _enemy.body.touching.up) {
+          // player hit enemy on top
+          _player.bounceUpAfterHitEnemyOnHead();
+          _enemy.gotHitOnHead();
+          this.registry.values.score += _enemy.dyingScoreValue;
+          this.events.emit('scoreChanged');
+          this.enemiesManager.showAndAddScore(_enemy);
+          this.add.tween({
+            targets: _enemy,
+            props: { alpha: 0 },
+            duration: 1000,
+            ease: 'Power0',
+            yoyo: false,
+            onComplete: function () {
+              _enemy.isDead();
+            }
+          });
+        } else {
+          if (_player.getVulnerable()) {
+            this.endSound.play();
+            _player.gotHit();
+          }
+        }
+      }
 }
