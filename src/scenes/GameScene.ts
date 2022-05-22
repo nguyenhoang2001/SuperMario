@@ -1,4 +1,5 @@
 import { Box } from "../objects/Box";
+import { BoxesManager } from "../objects/BoxesManager";
 import { Brick } from "../objects/Brick";
 import { Collectible } from "../objects/Collectible";
 import { Mario } from "../objects/Mario";
@@ -12,18 +13,15 @@ export class GameScene extends Phaser.Scene {
     private objectOnGround!: Phaser.Tilemaps.TilemapLayer;
 
     // game objects
-    private boxes!: Phaser.GameObjects.Group;
     private bricks!: Phaser.GameObjects.Group;
     private collectibles!: Phaser.GameObjects.Group;
     private enemies!: Phaser.GameObjects.Group;
     private player!: Mario;
     private portals!: Phaser.GameObjects.Group;
+    private boxesManager!: BoxesManager;
 
     // input
     private keys!: Map<string, Phaser.Input.Keyboard.Key>;
-
-    //variables
-    private hitBoxTimeline!: Phaser.Tweens.Timeline;
 
     constructor() {
         super({
@@ -42,13 +40,11 @@ export class GameScene extends Phaser.Scene {
         this.createCollider();
         // CAMERA
         this.createCamera();
-        // VARIABLES
-        this.createVariables();
     }
 
     update (time:number, delta:number): void {
         this.updatePlayer();
-        this.updateBox();
+        this.updateBoxes();
         this.updateBricks();
     }
 
@@ -67,7 +63,7 @@ export class GameScene extends Phaser.Scene {
 
     private updateBricks() {
         this.bricks.children.each((_brick: Brick|any) => {
-            if(_brick.body.touching.down) {
+            if(_brick.body.touching.down && this.player.body.touching.up) {
                 console.log('hit the brick');
                 if(this.player.marioSize === 'big')
                     _brick.destroy();
@@ -75,12 +71,12 @@ export class GameScene extends Phaser.Scene {
         }, this);
     }
 
-    private updateBox() {
-        this.boxes.children.each((_box: Box|any) => {
-            if(_box.body.touching.down & _box.active) {
+    private updateBoxes() {
+        this.boxesManager.boxes.children.each((_box: Box|any) => {
+            if(_box.body.touching.down && this.player.body.touching.up && _box.active) {
                 console.log('hit the box');
-                this.playerHitBox(this.player,_box);
-                _box.active = false;
+                this.playerHitBox(_box);
+                //_box.active = false;
             }
         }, this);
     }
@@ -96,11 +92,6 @@ export class GameScene extends Phaser.Scene {
             ['DOWN', this.addKey('DOWN')],
             ['JUMP', this.addKey('UP')]
         ]);
-    }
-
-    private createVariables(): void {
-        // variables
-        this.hitBoxTimeline = this.tweens.createTimeline({});
     }
 
     private createTileMap(): void {
@@ -119,10 +110,12 @@ export class GameScene extends Phaser.Scene {
 
     private createGameObjects(): void {
         this.portals = this.add.group({});
-        this.boxes = this.add.group({});
+        //this.boxes = this.add.group({});
         this.bricks = this.add.group({});
         this.collectibles = this.add.group({});
         this.enemies = this.add.group({});
+        this.boxesManager = new BoxesManager();
+        this.boxesManager.boxes = this.add.group({});
         this.loadObjectsFromTilemap();
     }
 
@@ -141,7 +134,8 @@ export class GameScene extends Phaser.Scene {
         this.physics.add.collider(this.player, this.foreground);
         this.physics.add.collider(this.player, this.objectOnGround);
         this.physics.add.collider(this.player, this.bricks);
-        this.physics.add.collider(this.player, this.boxes);
+
+        this.physics.add.collider(this.player, this.boxesManager.boxes);
 
         this.physics.add.collider(
             this.player,
@@ -218,17 +212,10 @@ export class GameScene extends Phaser.Scene {
                 this.collectibles.add(collectible);
             }
             else if (object.type === 'box') {
-                let box = new Box({
-                    scene:this,
-                    typeContent: object.properties[0].value,
-                    x:object.x,
-                    y:object.y,
-                    texture:'box'
-                });
+                let box = this.boxesManager.addBox(this,object.properties[0].value,object.x,object.y);
                 this.physics.world.enable(box);
                 box.setBody();
                 this.add.existing(box);
-                this.boxes.add(box);
             }
         });
     }
@@ -278,36 +265,40 @@ export class GameScene extends Phaser.Scene {
         }
     }
 
-    private handlePlayerPortal(_player: Mario|any, _portal: Portal|any): void {
+    private handlePlayerPortal(_player: any, _portal: any): void {
+        let myPlayer = _player as Mario;
+        let myPortal = _portal as Portal;
         if (
           (this.keys.get('DOWN')?.isDown &&
-            _portal.getPortalDestination().dir === 'down') ||
+          myPortal.getPortalDestination().dir === 'down') ||
           (this.keys.get('RIGHT')?.isDown &&
-            _portal.getPortalDestination().dir === 'right')
+          myPortal.getPortalDestination().dir === 'right')
         ) {
           // set new level and new destination for mario
-          this.registry.set('level', _portal.name);
+          this.registry.set('level', myPortal.name);
           this.registry.set('spawn', {
-            x: _portal.getPortalDestination().x,
-            y: _portal.getPortalDestination().y,
-            dir: _portal.getPortalDestination().dir
+            x: myPortal.getPortalDestination().x,
+            y: myPortal.getPortalDestination().y,
+            dir: myPortal.getPortalDestination().dir
           });
     
           // restart the game scene
           this.scene.restart();
-        } else if (_portal.name === 'exit') {
+        } else if (myPortal.name === 'exit') {
           this.scene.stop('GameScene');
         //   this.scene.stop('HUDScene');
           this.scene.start('MenuScene');
         }
     }
-    private handlePlayerCollectibles(_player: Mario|any, _collectible: Collectible|any): void {
+    private handlePlayerCollectibles(_player: any, _collectible: any): void {
+        let myPlayer = _player as Mario;
+        let myCollectible = _collectible as Collectible;
         switch (_collectible.texture.key) {
           case 'flower': {
             break;
           }
           case 'mushroom': {
-            _player.growMario();
+            myPlayer.growMario();
             break;
           }
           case 'star': {
@@ -317,23 +308,27 @@ export class GameScene extends Phaser.Scene {
             break;
           }
         }
-        _collectible.destroy();
+        myCollectible.destroy();
         this.registry.values.score += _collectible.points;
         this.events.emit('scoreChanged');
     }
 
-    private playerHitBox(_player: Mario|any, _box: Box|any): void {
+    private playerHitBox(_box: Box): void {
         if (_box.body.touching.down && _box.active) {
-           
-          // ok, mario has really hit a box on the downside
-          _box.yoyoTheBoxUpAndDown();
-          this.collectibles.add(_box.spawnBoxContent());
+          this.boxesManager.yoyoTheBoxUpAndDown(_box);
+          this.boxesManager.spawnBoxContent(_box);
+
+          this.physics.world.enable(_box.content);
+          _box.content.setBody();
+          this.add.existing(_box.content);
+          this.collectibles.add(_box.content);
+
           switch (_box.getBoxContentString()) {
-            // have a look what is inside the box! Christmas time!
             case 'coin': {
-              _box.tweenBoxContent({ y: _box.y - 40, alpha: 0 }, 700,() => {
+              this.boxesManager.tweenBoxContent(_box,{ y: _box.y - 40, alpha: 0 }, 700,() => {
                 _box.getContent().destroy();
               });
+
               this.registry.values.coins += 1;
               this.events.emit('coinsChanged');
               this.registry.values.score += 100;
@@ -341,14 +336,14 @@ export class GameScene extends Phaser.Scene {
               break;
             }
             case 'mushroom': {
-              _box.popUpCollectible();
+              this.boxesManager.popUpCollectible(_box);
               break;
             }
             default: {
               break;
             }
           }
-          _box.startHitTimeline();
+          this.boxesManager.startHitTimeline(_box);
         }
     }
 }

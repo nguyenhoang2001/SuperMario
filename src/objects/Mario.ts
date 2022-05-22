@@ -48,7 +48,7 @@ export class Mario extends Phaser.GameObjects.Sprite {
     }
 
     private adjustPhysicBodyToBigSize(): void {
-        this.body.setSize(32, 64);
+        this.body.setSize(28, 64);
         this.body.setOffset(0,0);
     }
 
