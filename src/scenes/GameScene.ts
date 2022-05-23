@@ -337,11 +337,11 @@ export class GameScene extends Phaser.Scene {
         // handle movements to left and right
         if (this.keys.get('RIGHT')?.isDown) {
             this.directionBullet = 1;
-            this.player.body.setVelocityX(200);
+            this.player.body.setVelocityX(300);
             this.player.setFlipX(false);
         } else if (this.keys.get('LEFT')?.isDown) {
             this.directionBullet = -1;
-            this.player.body.setVelocityX(-200);
+            this.player.body.setVelocityX(-300);
             this.player.setFlipX(true);
         } else {
             this.player.body.setVelocityX(0);
@@ -351,7 +351,7 @@ export class GameScene extends Phaser.Scene {
         // handle jumping
         if (this.keys.get('JUMP')?.isDown) {
             if(!this.player.isJumping) {
-                this.player.body.setVelocityY(-700);
+                this.player.body.setVelocityY(-300);
                 this.player.isJumping = true;
             }
         }
