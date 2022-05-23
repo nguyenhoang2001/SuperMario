@@ -48,6 +48,8 @@ export class GameScene extends Phaser.Scene {
         this.createGameObjects();
         // COLLIDERS
         this.createCollider();
+        // OVERLAP
+        this.createOverlap();
         // CAMERA
         this.createCamera();
         // SOUND
@@ -141,18 +143,20 @@ export class GameScene extends Phaser.Scene {
         this.playerBoxesCollision();
         this.playerBricksCollision();
         this.playerGoombasCollision();
-
-        this.physics.add.collider(
-            this.player,
-            this.portals,
-            this.handlePlayerPortal,
-            undefined,
-            this
-        );
         this.physics.add.collider(
             this.player,
             this.collectibles,
             this.handlePlayerCollectibles,
+            undefined,
+            this
+        );
+    }
+
+    private createOverlap() {
+        this.physics.add.overlap(
+            this.player,
+            this.portals,
+            this.handlePlayerPortal,
             undefined,
             this
         );
@@ -347,7 +351,7 @@ export class GameScene extends Phaser.Scene {
         // handle jumping
         if (this.keys.get('JUMP')?.isDown) {
             if(!this.player.isJumping) {
-                this.player.body.setVelocityY(-400);
+                this.player.body.setVelocityY(-700);
                 this.player.isJumping = true;
             }
         }

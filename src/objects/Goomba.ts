@@ -6,7 +6,7 @@ export class Goomba extends Enemy {
 
     constructor(aParams: SpriteInterface) {
       super(aParams);
-      this.speed = -20;
+      this.speed = -10;
       this.dyingScoreValue = 100;
     }
 

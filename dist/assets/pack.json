@@ -13,6 +13,16 @@
           "url": "./assets/maps/superMario.json"
         },
         {
+          "type": "tilemapTiledJSON",
+          "key": "level2",
+          "url": "./assets/maps/level2.json"
+        },
+        {
+          "type": "tilemapTiledJSON",
+          "key": "level3",
+          "url": "./assets/maps/level3.json"
+        },
+        {
           "type": "image",
           "key": "tiles",
           "url": "./assets/tiles/tiles.png"

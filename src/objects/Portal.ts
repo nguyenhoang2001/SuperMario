@@ -31,7 +31,7 @@ export class Portal extends Phaser.GameObjects.Zone {
       }
 
       public setUpBody() {
-        this.body.setSize(this.width, this.height);
+        this.body.setSize(32, 96);
         this.body.setOffset(0, 0);
         this.body.setAllowGravity(false);
         this.body.setImmovable(true);

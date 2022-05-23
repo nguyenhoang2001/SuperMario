@@ -28,6 +28,15 @@
                 }]
         }, 
         {
+         "id":34,
+         "properties":[
+                {
+                 "name":"collide",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
          "id":232,
          "properties":[
                 {
@@ -38,6 +47,33 @@
         }, 
         {
          "id":233,
+         "properties":[
+                {
+                 "name":"collide",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":237,
+         "properties":[
+                {
+                 "name":"collide",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":238,
+         "properties":[
+                {
+                 "name":"collide",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":239,
          "properties":[
                 {
                  "name":"collide",

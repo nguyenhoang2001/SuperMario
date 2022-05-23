@@ -842,22 +842,22 @@
                 {
                  "height":96,
                  "id":71,
-                 "name":"exit",
+                 "name":"level2",
                  "properties":[
                         {
                          "name":"direction",
                          "type":"string",
-                         "value":"null"
+                         "value":"down"
                         }, 
                         {
                          "name":"marioSpawnX",
                          "type":"int",
-                         "value":32
+                         "value":96
                         }, 
                         {
                          "name":"marioSpawnY",
                          "type":"int",
-                         "value":736
+                         "value":704
                         }],
                  "rotation":0,
                  "type":"portal",
@@ -979,6 +979,15 @@
                 }]
         }, 
         {
+         "id":34,
+         "properties":[
+                {
+                 "name":"collide",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
          "id":232,
          "properties":[
                 {
@@ -989,6 +998,33 @@
         }, 
         {
          "id":233,
+         "properties":[
+                {
+                 "name":"collide",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":237,
+         "properties":[
+                {
+                 "name":"collide",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":238,
+         "properties":[
+                {
+                 "name":"collide",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":239,
          "properties":[
                 {
                  "name":"collide",
