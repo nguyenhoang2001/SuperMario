@@ -494,9 +494,9 @@ export class GameScene extends Phaser.Scene {
             (this.keys.get('DOWN')?.isDown &&
             myPipePortal.getPortalDestination().dir === 'down' && this.allowTele)
           ) {  
-                this.allowTele = false;
+            this.allowTele
                 myPlayer.x = myPipePortal.getPortalDestination().x;
-                myPlayer.y = myPipePortal.getPortalDestination().y - 100;
+                myPlayer.y = myPipePortal.getPortalDestination().y - 40;
           }
         if (this.keys.get('DOWN')?.isUp && !this.allowTele) {
             this.allowTele = true;
@@ -569,11 +569,21 @@ export class GameScene extends Phaser.Scene {
     private handlePlayerEnemy(_player: Mario, _enemy: Goomba): void {
         if (_player.body.touching.down && _enemy.body.touching.up) {
           // player hit enemy on top
-          _player.bounceUpAfterHitEnemyOnHead();
+
+          this.add.tween({
+            targets: _player,
+            props: { y: _player.y - 5 },
+            duration: 200,
+            ease: 'Power1',
+            yoyo: true
+          });
+
           _enemy.gotHitOnHead();
+
           this.registry.values.score += _enemy.dyingScoreValue;
           this.events.emit('scoreChanged');
           this.enemiesManager.showAndAddScore(_enemy);
+          
           this.add.tween({
             targets: _enemy,
             props: { alpha: 0 },
@@ -588,6 +598,16 @@ export class GameScene extends Phaser.Scene {
           if (_player.getVulnerable()) {
             this.endSound.play();
             _player.gotHit();
+            // sets acceleration, velocity and speed to zero
+            // stop all animations
+            _player.body.stop();
+            _player.anims.stop();
+            // make last dead jump and turn off collision check
+            _player.body.setVelocityY(-180);
+            _player.body.checkCollision.up = false;
+            _player.body.checkCollision.down = false;
+            _player.body.checkCollision.left = false;
+            _player.body.checkCollision.right = false;
           }
         }
       }

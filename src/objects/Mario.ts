@@ -123,16 +123,6 @@ export class Mario extends Phaser.GameObjects.Sprite {
         this.adjustPhysicBodyToSmallSize();
     }
 
-    public bounceUpAfterHitEnemyOnHead(): void {
-        this.currentScene.add.tween({
-            targets: this,
-            props: { y: this.y - 5 },
-            duration: 200,
-            ease: 'Power1',
-            yoyo: true
-        });
-    }
-
     public getVulnerable(): boolean {
       return this.isVulnerable;
     }
@@ -144,20 +134,6 @@ export class Mario extends Phaser.GameObjects.Sprite {
         } else {
           // mario is dying
           this.isDying = true;
-    
-          // sets acceleration, velocity and speed to zero
-          // stop all animations
-          this.body.stop();
-          this.anims.stop();
-    
-          // make last dead jump and turn off collision check
-          this.body.setVelocityY(-180);
-    
-          // this.body.checkCollision.none did not work for me
-          this.body.checkCollision.up = false;
-          this.body.checkCollision.down = false;
-          this.body.checkCollision.left = false;
-          this.body.checkCollision.right = false;
         }
     }
 }
