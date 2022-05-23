@@ -324,19 +324,29 @@
                 {
                  "height":32,
                  "id":16,
-                 "name":"box",
+                 "name":"pipePortal",
                  "properties":[
                         {
-                         "name":"content",
+                         "name":"direction",
                          "type":"string",
-                         "value":"coin"
+                         "value":"down"
+                        }, 
+                        {
+                         "name":"marioSpawnX",
+                         "type":"int",
+                         "value":2528
+                        }, 
+                        {
+                         "name":"marioSpawnY",
+                         "type":"int",
+                         "value":608
                         }],
                  "rotation":0,
-                 "type":"box",
+                 "type":"pipePortal",
                  "visible":true,
                  "width":32,
-                 "x":1824,
-                 "y":640
+                 "x":1664,
+                 "y":608
                 }, 
                 {
                  "height":32,
@@ -1106,6 +1116,104 @@
                  "width":32,
                  "x":6752,
                  "y":672
+                }, 
+                {
+                 "height":32,
+                 "id":74,
+                 "name":"box",
+                 "properties":[
+                        {
+                         "name":"content",
+                         "type":"string",
+                         "value":"coin"
+                        }],
+                 "rotation":0,
+                 "type":"box",
+                 "visible":true,
+                 "width":32,
+                 "x":1826.66666666667,
+                 "y":638.666666666667
+                }, 
+                {
+                 "height":32,
+                 "id":75,
+                 "name":"pipePortal",
+                 "properties":[
+                        {
+                         "name":"direction",
+                         "type":"string",
+                         "value":"down"
+                        }, 
+                        {
+                         "name":"marioSpawnX",
+                         "type":"int",
+                         "value":3680
+                        }, 
+                        {
+                         "name":"marioSpawnY",
+                         "type":"int",
+                         "value":608
+                        }],
+                 "rotation":0,
+                 "type":"pipePortal",
+                 "visible":true,
+                 "width":32,
+                 "x":2528,
+                 "y":608
+                }, 
+                {
+                 "height":32,
+                 "id":76,
+                 "name":"pipePortal",
+                 "properties":[
+                        {
+                         "name":"direction",
+                         "type":"string",
+                         "value":"down"
+                        }, 
+                        {
+                         "name":"marioSpawnX",
+                         "type":"int",
+                         "value":5408
+                        }, 
+                        {
+                         "name":"marioSpawnY",
+                         "type":"int",
+                         "value":608
+                        }],
+                 "rotation":0,
+                 "type":"pipePortal",
+                 "visible":true,
+                 "width":32,
+                 "x":3680,
+                 "y":608
+                }, 
+                {
+                 "height":32,
+                 "id":77,
+                 "name":"pipePortal",
+                 "properties":[
+                        {
+                         "name":"direction",
+                         "type":"string",
+                         "value":"null"
+                        }, 
+                        {
+                         "name":"marioSpawnX",
+                         "type":"int",
+                         "value":32
+                        }, 
+                        {
+                         "name":"marioSpawnY",
+                         "type":"int",
+                         "value":704
+                        }],
+                 "rotation":0,
+                 "type":"pipePortal",
+                 "visible":true,
+                 "width":32,
+                 "x":5408,
+                 "y":608
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -1114,7 +1222,7 @@
          "y":0
         }],
  "nextlayerid":6,
- "nextobjectid":74,
+ "nextobjectid":78,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.8.5",
@@ -1123,7 +1231,7 @@
         {
          "firstgid":1,
          "columns":29,
- "image":"C:\/Users\/MSI-\/Downloads\/tiles.png",
+ "image":"../tiles/tiles.png",
  "imageheight":907,
  "imagewidth":956,
  "margin":0,

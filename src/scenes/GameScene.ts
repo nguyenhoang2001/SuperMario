@@ -23,6 +23,7 @@ export class GameScene extends Phaser.Scene {
     private boxesManager!: BoxesManager;
     private enemiesManager!: EnemiesManager;
     private marioBulletsManager!: MarioBulletsManager;
+    private pipePortals!: Phaser.GameObjects.Group;
     // Input
     private keys!: Map<string, Phaser.Input.Keyboard.Key>;
     // Game Sound
@@ -32,6 +33,7 @@ export class GameScene extends Phaser.Scene {
     private lastShoot!: number;
     private directionBullet!:number;
     private allowShoot!: boolean;
+    private allowTele!: boolean;
 
     constructor() {
         super({
@@ -116,6 +118,7 @@ export class GameScene extends Phaser.Scene {
         this.portals = this.add.group({});
         this.bricks = this.add.group({});
         this.collectibles = this.add.group({});
+        this.pipePortals = this.add.group({});
         this.enemiesManager = new EnemiesManager();
         this.enemiesManager.goombas = this.add.group({});
         this.boxesManager = new BoxesManager();
@@ -160,6 +163,13 @@ export class GameScene extends Phaser.Scene {
             undefined,
             this
         );
+        this.physics.add.overlap(
+            this.player,
+            this.pipePortals,
+            this.handlePlayerPipePortal,
+            undefined,
+            this
+        );
     }
 
     private createSound() {
@@ -171,6 +181,7 @@ export class GameScene extends Phaser.Scene {
         this.lastShoot = 0;
         this.directionBullet = 1;
         this.allowShoot = true;
+        this.allowTele = true;
     }
 
     private enemiesCollision(): void {
@@ -283,6 +294,24 @@ export class GameScene extends Phaser.Scene {
                 this.add.existing(portal);
                 this.portals.add(portal);
             }
+            else if (object.type == 'pipePortal') {
+                let pipePortal = new Portal({
+                    scene: this,
+                    x: object.x,
+                    y: object.y,
+                    height: object.width,
+                    width: object.height,
+                    spawn: {
+                      x: object.properties[1].value,
+                      y: object.properties[2].value,
+                      dir: object.properties[0].value
+                    }
+                  }).setName(object.name);
+                this.physics.world.enable(pipePortal);
+                pipePortal.setUpBody();
+                this.add.existing(pipePortal);
+                this.pipePortals.add(pipePortal);
+            }
             else if(object.type === 'brick') {
                 let brick = new Brick({
                     scene:this,
@@ -337,11 +366,11 @@ export class GameScene extends Phaser.Scene {
         // handle movements to left and right
         if (this.keys.get('RIGHT')?.isDown) {
             this.directionBullet = 1;
-            this.player.body.setVelocityX(300);
+            this.player.body.setVelocityX(200);
             this.player.setFlipX(false);
         } else if (this.keys.get('LEFT')?.isDown) {
             this.directionBullet = -1;
-            this.player.body.setVelocityX(-300);
+            this.player.body.setVelocityX(-200);
             this.player.setFlipX(true);
         } else {
             this.player.body.setVelocityX(0);
@@ -455,6 +484,22 @@ export class GameScene extends Phaser.Scene {
           this.scene.stop('GameScene');
         //   this.scene.stop('HUDScene');
           this.scene.start('MenuScene');
+        }
+    }
+
+    private handlePlayerPipePortal(_player: any, _pipePortal: any) {
+        let myPlayer = _player as Mario;
+        let myPipePortal = _pipePortal as Portal;
+        if (
+            (this.keys.get('DOWN')?.isDown &&
+            myPipePortal.getPortalDestination().dir === 'down' && this.allowTele)
+          ) {   
+                this.allowTele = false;
+                myPlayer.x = myPipePortal.getPortalDestination().x;
+                myPlayer.y = myPipePortal.getPortalDestination().y - 20;
+          }
+        if (this.keys.get('DOWN')?.isUp && !this.allowTele) {
+            this.allowTele = true;
         }
     }
 
