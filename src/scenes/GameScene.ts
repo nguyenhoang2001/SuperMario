@@ -493,10 +493,10 @@ export class GameScene extends Phaser.Scene {
         if (
             (this.keys.get('DOWN')?.isDown &&
             myPipePortal.getPortalDestination().dir === 'down' && this.allowTele)
-          ) {   
+          ) {  
                 this.allowTele = false;
                 myPlayer.x = myPipePortal.getPortalDestination().x;
-                myPlayer.y = myPipePortal.getPortalDestination().y - 20;
+                myPlayer.y = myPipePortal.getPortalDestination().y - 100;
           }
         if (this.keys.get('DOWN')?.isUp && !this.allowTele) {
             this.allowTele = true;
