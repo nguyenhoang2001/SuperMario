@@ -3,11 +3,12 @@ import { BoxesManager } from "../objects/BoxesManager";
 import { Brick } from "../objects/Brick";
 import { Bullet } from "../objects/Bullet";
 import { Collectible } from "../objects/Collectible";
+import { CreepBehavior } from "../objects/CreepBehavior";
 import { EnemiesManager } from "../objects/EnemiesManager";
 import { Goomba } from "../objects/Goomba";
 import { Mario } from "../objects/Mario";
-import { MarioBulletsManager } from "../objects/MarioBulletsManager";
 import { Portal } from "../objects/Portal";
+import { ShootBehavior } from "../objects/ShootBehavior";
 
 export class GameScene extends Phaser.Scene {
     // Tile map
@@ -22,7 +23,8 @@ export class GameScene extends Phaser.Scene {
     private portals!: Phaser.GameObjects.Group;
     private boxesManager!: BoxesManager;
     private enemiesManager!: EnemiesManager;
-    private marioBulletsManager!: MarioBulletsManager;
+    private shootMonsters!: ShootBehavior;
+    private creepPipes!: CreepBehavior;
     private pipePortals!: Phaser.GameObjects.Group;
     // Input
     private keys!: Map<string, Phaser.Input.Keyboard.Key>;
@@ -67,7 +69,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     private updatePlayer() {
-        if(!this.player.isDying) {
+        if(!this.player.getIsDying()) {
             this.handleInputs();
             this.player.update();
         } else {
@@ -79,7 +81,8 @@ export class GameScene extends Phaser.Scene {
     }
 
     private updatePlayerBullets() {
-        this.marioBulletsManager.updateMarioBullets();
+        //this.marioBulletsManager.updateMarioBullets();
+        this.shootMonsters.updateBullets();
     }
 
     private updateEnemies() {
@@ -112,6 +115,8 @@ export class GameScene extends Phaser.Scene {
         this.foreground.setCollisionByProperty({ collide: true });
         this.objectOnGround.setName('objectOnGround');
         this.objectOnGround.setCollisionByProperty({ collide: true });
+        this.foreground.depth = 1;
+        this.objectOnGround.depth = 1;
     }
 
     private createGameObjects(): void {
@@ -123,9 +128,12 @@ export class GameScene extends Phaser.Scene {
         this.enemiesManager.goombas = this.add.group({});
         this.boxesManager = new BoxesManager();
         this.boxesManager.boxes = this.add.group({});
-        this.marioBulletsManager = new MarioBulletsManager();
-        this.marioBulletsManager.bullets = this.add.group({});
+        this.shootMonsters = new ShootBehavior();
+        this.shootMonsters.bullets = this.add.group({});
+        this.creepPipes = new CreepBehavior();
         this.loadObjectsFromTilemap();
+        this.shootMonsters.setParent(this.player);
+        this.creepPipes.setParent(this.player);
     }
 
     private createCamera(): void {
@@ -236,7 +244,7 @@ export class GameScene extends Phaser.Scene {
                 () => {
                     if(brick.body.touching.down) {
                         console.log('hit the brick');
-                        if(this.player.marioSize === 'big')
+                        if(this.player.getSize() === 'big')
                             brick.destroy();
                     }
                 },
@@ -280,7 +288,7 @@ export class GameScene extends Phaser.Scene {
                 let portal = new Portal({
                     scene: this,
                     x: object.x,
-                    y: object.y,
+                    y: object.y + 48,
                     height: object.width,
                     width: object.height,
                     spawn: {
@@ -298,7 +306,7 @@ export class GameScene extends Phaser.Scene {
                 let pipePortal = new Portal({
                     scene: this,
                     x: object.x,
-                    y: object.y,
+                    y: object.y + 16,
                     height: object.width,
                     width: object.height,
                     spawn: {
@@ -316,7 +324,7 @@ export class GameScene extends Phaser.Scene {
                 let brick = new Brick({
                     scene:this,
                     x:object.x,
-                    y:object.y,
+                    y:object.y + 16,
                     texture:'brick'
                 });
                 this.physics.world.enable(brick);
@@ -360,8 +368,7 @@ export class GameScene extends Phaser.Scene {
             this.player.body.touching.down ||
             this.player.body.blocked.down
         ) {
-            this.player.allowJump = 2;
-            this.player.isJumping = false;
+            this.player.resetAllowJump();
         }
         // handle movements to left and right
         if (this.keys.get('RIGHT')?.isDown) {
@@ -379,16 +386,16 @@ export class GameScene extends Phaser.Scene {
     
         // handle jumping
         if (this.keys.get('JUMP')?.isDown) {
-            if(!this.player.isJumping) {
+            if(!this.player.getIsJumping()) {
                 this.player.body.setVelocityY(-300);
-                this.player.isJumping = true;
+                this.player.setIsJumping(true);
             }
         }
         if(this.keys.get('JUMP')?.isUp) {
-            if(this.player.isJumping) {
-                this.player.allowJump -= 1;
-                if(this.player.allowJump > 0) {
-                    this.player.isJumping = false;
+            if(this.player.getIsJumping()) {
+                this.player.reduceJump();
+                if(this.player.getAllowJump() > 0) {
+                    this.player.setIsJumping(false);
                 }
             }
         }
@@ -396,14 +403,14 @@ export class GameScene extends Phaser.Scene {
         // handle shooting
         if(this.keys.get('SHOOT')?.isDown ) {
             if(this.time.now > this.lastShoot && this.allowShoot) {
-                let offsetY = 32;
-                if(this.player.marioSize === 'small') {
-                    offsetY = 48;
+                let offsetY = 0;
+                if(this.player.getSize() === 'small') {
+                    offsetY = 16;
                 }
-                let bullet = this.marioBulletsManager.addBullet(
+                let bullet = this.shootMonsters.shoot(
                     this,
                     this.player.x,
-                    this.player.y + offsetY,
+                    this.player.y+ offsetY,
                     this.directionBullet*700
                 );
                 this.physics.world.enable(bullet);
@@ -494,9 +501,9 @@ export class GameScene extends Phaser.Scene {
             (this.keys.get('DOWN')?.isDown &&
             myPipePortal.getPortalDestination().dir === 'down' && this.allowTele)
           ) {  
-            this.allowTele
-                myPlayer.x = myPipePortal.getPortalDestination().x;
-                myPlayer.y = myPipePortal.getPortalDestination().y - 40;
+                this.allowTele = false;
+                this.creepPipes.setSpawnX(myPipePortal.getPortalDestination().x + 16);
+                this.creepPipes.creep();
           }
         if (this.keys.get('DOWN')?.isUp && !this.allowTele) {
             this.allowTele = true;
@@ -516,7 +523,7 @@ export class GameScene extends Phaser.Scene {
             break;
           }
           case 'mushroom': {
-            myPlayer.growMario();
+            myPlayer.grow();
             break;
           }
           case 'star': {
@@ -541,7 +548,7 @@ export class GameScene extends Phaser.Scene {
           this.add.existing(_box.content);
           this.collectibles.add(_box.content);
 
-          switch (_box.getBoxContentString()) {
+          switch (_box.getBoxContent()) {
             case 'coin': {
               this.coinSound.stop();
               this.coinSound.play();

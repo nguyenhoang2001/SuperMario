@@ -9,7 +9,7 @@ export class BoxesManager {
             scene:scene,
             typeContent: typeContent,
             x:x,
-            y:y,
+            y:y + 16,
             texture:'box'
         });
         this.boxes.add(box);
@@ -47,10 +47,10 @@ export class BoxesManager {
 
     public spawnBoxContent(box:Box): Collectible {
         box.content = new Collectible({
-            scene: box.currentScene,
+            scene: box.scene,
             x: box.x + 8,
             y: box.y - 32,
-            texture: box.boxContent,
+            texture: box.getBoxContent(),
             points: 100
         });
         return box.content;

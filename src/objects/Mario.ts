@@ -3,43 +3,80 @@ import { SpriteInterface } from "../interfaces/SpriteInterface";
 export class Mario extends Phaser.GameObjects.Sprite {
     body!: Phaser.Physics.Arcade.Body;
     // variables
-    private currentScene!: Phaser.Scene;
-    public marioSize!: string;
-    public acceleration!: number;
-    public isJumping!: boolean;
-    public isDying!: boolean;
-    public allowJump!:number;
+    private size!: string;
+    private isJumping!: boolean;
+    private isDying!: boolean;
+    private allowJump!:number;
     private isVulnerable!: boolean;
     private vulnerableCounter!: number;
-
+    public creeping!: boolean;
+    private nextPos!: number;
+    private countCreeping!:number;
 
     constructor(aParams:SpriteInterface) {
         super(aParams.scene,aParams.x,aParams.y,aParams.texture,aParams.frame);
-        this.currentScene = aParams.scene;
         this.initSprite();
+    }
+
+    public getSize() {
+      return this.size;
+    }
+
+    public setNextPos(nextPos:number) {
+      this.nextPos = nextPos;
+    }
+
+    public getIsJumping() {
+      return this.isJumping;
+    }
+
+    public getIsDying() {
+      return this.isDying;
+    }
+
+    public getAllowJump() {
+      return this.allowJump;
+    }
+
+    public resetAllowJump() {
+      this.isJumping = false;
+      this.allowJump = 2;
+    }
+
+    public reduceJump() {
+      this.allowJump -= 1;
+    }
+
+    public setIsJumping(state:boolean) {
+      this.isJumping = state;
+    }
+
+    public setCreeping(state:boolean) {
+      this.creeping = state;
     }
 
     private initSprite() {
         // variables
-        this.marioSize = this.currentScene.registry.get('marioSize');
-        this.acceleration = 500;
+        this.size = this.scene.registry.get('marioSize');
         this.isJumping = false;
         this.isDying = false;
         this.isVulnerable = true;
         this.vulnerableCounter = 100;
-        this.allowJump = 3;
+        this.allowJump = 2;
+        this.creeping = false;
+        this.nextPos = this.x;
+        this.countCreeping = 36;
         // sprite
-        this.setOrigin(0, 0);
         this.setFlipX(false);
     }
 
     public setUpBody() {
-        if(this.marioSize === 'small')
+        if(this.size === 'small')
             this.adjustPhysicBodyToSmallSize();
         else 
             this.adjustPhysicBodyToBigSize();
         this.body.maxVelocity.x = 300;
-        this.body.maxVelocity.y = 300;
+        this.body.maxVelocity.y = 1000;
         this.body.setGravityY(150);
     }
 
@@ -55,11 +92,11 @@ export class Mario extends Phaser.GameObjects.Sprite {
 
     public update(): void {
         if(!this.isDying) {
-          if (this.y > this.currentScene.sys.canvas.height) {
+          this.handleAnimations();
+          if (this.y > this.scene.sys.canvas.height) {
             // mario fell into a hole
             this.isDying = true;
           }
-            this.handleAnimations();
         }
         if (!this.isVulnerable) {
             if (this.vulnerableCounter > 0) {
@@ -75,7 +112,7 @@ export class Mario extends Phaser.GameObjects.Sprite {
         if (this.body.velocity.y !== 0) {
           // mario is jumping or falling
           this.anims.stop();
-          if (this.marioSize === 'small') {
+          if (this.size === 'small') {
             this.setFrame(4);
           } else {
             this.setFrame(9);
@@ -88,7 +125,7 @@ export class Mario extends Phaser.GameObjects.Sprite {
             (this.body.velocity.x < 0 && this.body.acceleration.x > 0) ||
             (this.body.velocity.x > 0 && this.body.acceleration.x < 0)
           ) {
-            if (this.marioSize === 'small') {
+            if (this.size === 'small') {
               this.setFrame(3);
             } else {
               this.setFrame(8);
@@ -96,30 +133,42 @@ export class Mario extends Phaser.GameObjects.Sprite {
           }
     
           if (this.body.velocity.x > 0) {
-            this.anims.play(this.marioSize + 'MarioWalk', true);
+            this.anims.play(this.size + 'MarioWalk', true);
           } else {
-            this.anims.play(this.marioSize + 'MarioWalk', true);
+            this.anims.play(this.size + 'MarioWalk', true);
           }
         } else {
           // mario is standing still
           this.anims.stop();
-          if (this.marioSize === 'small') {
+          if (this.size === 'small') {
             this.setFrame(0);
           } else {
               this.setFrame(5);
           }
         }
+        if (this.creeping) {
+          if(this.countCreeping <= 0) {
+            this.x = this.nextPos;
+            this.body.checkCollision.none = false;
+            this.body.setVelocityY(-400);
+            this.creeping = false;
+            this.countCreeping = 36;
+          }else {
+            this.body.checkCollision.none = true;
+            this.countCreeping -= 1;
+          }
+        } 
     }
 
-    public growMario(): void {
-        this.marioSize = 'big';
-        this.currentScene.registry.set('marioSize', 'big');
+    public grow(): void {
+        this.size = 'big';
+        this.scene.registry.set('marioSize', 'big');
         this.adjustPhysicBodyToBigSize();
     }
 
-    private shrinkMario(): void {
-        this.marioSize = 'small';
-        this.currentScene.registry.set('marioSize', 'small');
+    private shrink(): void {
+        this.size = 'small';
+        this.scene.registry.set('marioSize', 'small');
         this.adjustPhysicBodyToSmallSize();
     }
 
@@ -129,8 +178,8 @@ export class Mario extends Phaser.GameObjects.Sprite {
 
     public gotHit(): void {
         this.isVulnerable = false;
-        if (this.marioSize === 'big') {
-          this.shrinkMario();
+        if (this.size === 'big') {
+          this.shrink();
         } else {
           // mario is dying
           this.isDying = true;

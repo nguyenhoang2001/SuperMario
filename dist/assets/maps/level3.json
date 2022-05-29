@@ -334,7 +334,7 @@
                         {
                          "name":"marioSpawnX",
                          "type":"int",
-                         "value":2528
+                         "value":2542
                         }, 
                         {
                          "name":"marioSpawnY",
@@ -345,8 +345,8 @@
                  "type":"pipePortal",
                  "visible":true,
                  "width":32,
-                 "x":1664,
-                 "y":608
+                 "x":1677.33333333333,
+                 "y":606.666666666667
                 }, 
                 {
                  "height":32,
@@ -942,7 +942,7 @@
                  "type":"goomba",
                  "visible":true,
                  "width":32,
-                 "x":3456,
+                 "x":3453.33333333333,
                  "y":672
                 }, 
                 {
@@ -1131,8 +1131,8 @@
                  "type":"box",
                  "visible":true,
                  "width":32,
-                 "x":1826.66666666667,
-                 "y":638.666666666667
+                 "x":1826.67,
+                 "y":638.667
                 }, 
                 {
                  "height":32,
@@ -1147,7 +1147,7 @@
                         {
                          "name":"marioSpawnX",
                          "type":"int",
-                         "value":3680
+                         "value":3694
                         }, 
                         {
                          "name":"marioSpawnY",
@@ -1158,7 +1158,7 @@
                  "type":"pipePortal",
                  "visible":true,
                  "width":32,
-                 "x":2528,
+                 "x":2542.66666666667,
                  "y":608
                 }, 
                 {
@@ -1174,7 +1174,7 @@
                         {
                          "name":"marioSpawnX",
                          "type":"int",
-                         "value":5408
+                         "value":5422
                         }, 
                         {
                          "name":"marioSpawnY",
@@ -1185,7 +1185,7 @@
                  "type":"pipePortal",
                  "visible":true,
                  "width":32,
-                 "x":3680,
+                 "x":3694.66666666667,
                  "y":608
                 }, 
                 {
@@ -1212,8 +1212,8 @@
                  "type":"pipePortal",
                  "visible":true,
                  "width":32,
-                 "x":5408,
-                 "y":608
+                 "x":5422.66666666667,
+                 "y":606.666666666667
                 }],
          "opacity":1,
          "type":"objectgroup",

@@ -22,7 +22,7 @@ export class EnemiesManager {
     }
 
     public showAndAddScore(goomba:Goomba): void {
-        let scoreText = goomba.currentScene.add
+        let scoreText = goomba.scene.add
           .dynamicBitmapText(
             goomba.x,
             goomba.y - 20,
@@ -32,7 +32,7 @@ export class EnemiesManager {
           )
           .setOrigin(0, 0);
     
-          goomba.currentScene.add.tween({
+          goomba.scene.add.tween({
           targets: scoreText,
           props: { y: scoreText.y - 25 },
           duration: 800,

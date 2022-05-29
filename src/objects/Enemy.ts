@@ -4,7 +4,6 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     body!: Phaser.Physics.Arcade.Body;
 
     // variables
-    public currentScene!: Phaser.Scene;
     protected isActivated!: boolean;
     protected isDying!: boolean;
     protected speed!: number;
@@ -13,7 +12,6 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     constructor(aParams: SpriteInterface) {
         super(aParams.scene, aParams.x, aParams.y, aParams.texture, aParams.frame);
         // variables
-        this.currentScene = aParams.scene;
         this.initSprite();
     }
 
@@ -22,7 +20,6 @@ export class Enemy extends Phaser.GameObjects.Sprite {
         this.isActivated = true;
         this.isDying = false;
         // sprite
-        this.setOrigin(0, 0);
         this.setFrame(0);
     }
 

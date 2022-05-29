@@ -8,16 +8,6 @@ export class Bullet extends Phaser.GameObjects.Image {
     constructor(aParams: SpriteInterface, velocity:number) {
         super(aParams.scene, aParams.x, aParams.y, aParams.texture);
         this.bulletSpeed = velocity;
-        this.initImage();
-        //this.scene.add.existing(this);
-    }
-
-    private initImage() {
-        // image
-        this.setOrigin(0, 0);
-
-        // physics
-        //this.scene.physics.world.enable(this);
     }
 
     public setBody() {
