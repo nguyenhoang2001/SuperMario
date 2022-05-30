@@ -576,7 +576,6 @@ export class GameScene extends Phaser.Scene {
     private handlePlayerEnemy(_player: Mario, _enemy: Goomba): void {
         if (_player.body.touching.down && _enemy.body.touching.up) {
           // player hit enemy on top
-
           this.add.tween({
             targets: _player,
             props: { y: _player.y - 5 },
@@ -603,18 +602,20 @@ export class GameScene extends Phaser.Scene {
           });
         } else {
           if (_player.getVulnerable()) {
-            this.endSound.play();
-            _player.gotHit();
             // sets acceleration, velocity and speed to zero
             // stop all animations
-            _player.body.stop();
-            _player.anims.stop();
-            // make last dead jump and turn off collision check
-            _player.body.setVelocityY(-180);
-            _player.body.checkCollision.up = false;
-            _player.body.checkCollision.down = false;
-            _player.body.checkCollision.left = false;
-            _player.body.checkCollision.right = false;
+            if(_player.getSize() == 'small') {
+                this.endSound.play();
+                _player.body.stop();
+                _player.anims.stop();
+                // make last dead jump and turn off collision check
+                _player.body.setVelocityY(-180);
+                _player.body.checkCollision.up = false;
+                _player.body.checkCollision.down = false;
+                _player.body.checkCollision.left = false;
+                _player.body.checkCollision.right = false;
+            }
+            _player.gotHit();
           }
         }
       }

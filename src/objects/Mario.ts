@@ -146,17 +146,22 @@ export class Mario extends Phaser.GameObjects.Sprite {
               this.setFrame(5);
           }
         }
+
         if (this.creeping) {
           if(this.countCreeping <= 0) {
             this.x = this.nextPos;
-            this.body.checkCollision.none = false;
             this.body.setVelocityY(-400);
             this.creeping = false;
             this.countCreeping = 36;
           }else {
             this.body.checkCollision.none = true;
+            this.body.setGravityY(0);
             this.countCreeping -= 1;
           }
+        }
+        else {
+          this.body.setGravityY(150);
+          this.body.checkCollision.none = false;
         } 
     }
 

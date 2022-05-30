@@ -345,8 +345,8 @@
                  "type":"pipePortal",
                  "visible":true,
                  "width":32,
-                 "x":1677.33333333333,
-                 "y":606.666666666667
+                 "x":1677.33,
+                 "y":606.667
                 }, 
                 {
                  "height":32,
@@ -942,7 +942,7 @@
                  "type":"goomba",
                  "visible":true,
                  "width":32,
-                 "x":3453.33333333333,
+                 "x":3453.33,
                  "y":672
                 }, 
                 {
@@ -1158,7 +1158,7 @@
                  "type":"pipePortal",
                  "visible":true,
                  "width":32,
-                 "x":2542.66666666667,
+                 "x":2542.67,
                  "y":608
                 }, 
                 {
@@ -1185,7 +1185,7 @@
                  "type":"pipePortal",
                  "visible":true,
                  "width":32,
-                 "x":3694.66666666667,
+                 "x":3694.67,
                  "y":608
                 }, 
                 {
@@ -1212,8 +1212,8 @@
                  "type":"pipePortal",
                  "visible":true,
                  "width":32,
-                 "x":5422.66666666667,
-                 "y":606.666666666667
+                 "x":5422.67,
+                 "y":606.667
                 }],
          "opacity":1,
          "type":"objectgroup",
