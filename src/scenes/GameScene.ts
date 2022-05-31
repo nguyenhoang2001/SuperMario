@@ -65,24 +65,20 @@ export class GameScene extends Phaser.Scene {
     update (time:number, delta:number): void {
         this.updatePlayer();
         this.updateEnemies();
-        this.updatePlayerBullets();
+        //this.updatePlayerBullets();
     }
 
     private updatePlayer() {
         if(!this.player.getIsDying()) {
             this.handleInputs();
             this.player.update();
+            this.player.updateBullets();
         } else {
             if (this.player.y > this.sys.canvas.height) {
                 this.scene.stop('GameScene');
                 this.scene.start('MenuScene');
             }
         }
-    }
-
-    private updatePlayerBullets() {
-        //this.marioBulletsManager.updateMarioBullets();
-        this.shootMonsters.updateBullets();
     }
 
     private updateEnemies() {
@@ -403,16 +399,7 @@ export class GameScene extends Phaser.Scene {
         // handle shooting
         if(this.keys.get('SHOOT')?.isDown ) {
             if(this.time.now > this.lastShoot && this.allowShoot) {
-                let offsetY = 0;
-                if(this.player.getSize() === 'small') {
-                    offsetY = 16;
-                }
-                let bullet = this.shootMonsters.shoot(
-                    this,
-                    this.player.x,
-                    this.player.y+ offsetY,
-                    this.directionBullet*700
-                );
+                let bullet = this.player.shootEnemy(this.directionBullet*700);
                 this.physics.world.enable(bullet);
                 bullet.setBody();
                 this.add.existing(bullet);
@@ -502,8 +489,10 @@ export class GameScene extends Phaser.Scene {
             myPipePortal.getPortalDestination().dir === 'down' && this.allowTele)
           ) {  
                 this.allowTele = false;
-                this.creepPipes.setSpawnX(myPipePortal.getPortalDestination().x + 16);
-                this.creepPipes.creep();
+                // this.creepPipes.setSpawnX(myPipePortal.getPortalDestination().x + 16);
+                // this.creepPipes.creep();
+                this.player.setNextSpawn(myPipePortal.getPortalDestination().x + 16);
+                this.player.creepPipes();
           }
         if (this.keys.get('DOWN')?.isUp && !this.allowTele) {
             this.allowTele = true;

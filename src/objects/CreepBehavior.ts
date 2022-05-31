@@ -10,11 +10,11 @@ export class CreepBehavior {
 
     public creep() {
         this.parent.setCreeping(true);
-        this.parent.setNextPos(this.spawnX);
     }
 
     public setSpawnX(spawnX:number) {
         this.spawnX = spawnX;
+        this.parent.setNextPos(this.spawnX);
     }
 
 }

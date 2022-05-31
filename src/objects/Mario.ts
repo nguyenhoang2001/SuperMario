@@ -1,4 +1,7 @@
 import { SpriteInterface } from "../interfaces/SpriteInterface";
+import { Bullet } from "./Bullet";
+import { CreepBehavior } from "./CreepBehavior";
+import { ShootBehavior } from "./ShootBehavior";
 
 export class Mario extends Phaser.GameObjects.Sprite {
     body!: Phaser.Physics.Arcade.Body;
@@ -12,10 +15,17 @@ export class Mario extends Phaser.GameObjects.Sprite {
     public creeping!: boolean;
     private nextPos!: number;
     private countCreeping!:number;
+    private shoot!: ShootBehavior;
+    private creep!: CreepBehavior;
 
     constructor(aParams:SpriteInterface) {
         super(aParams.scene,aParams.x,aParams.y,aParams.texture,aParams.frame);
         this.initSprite();
+        this.shoot = new ShootBehavior();
+        this.shoot.bullets = this.scene.add.group({});
+        this.creep = new CreepBehavior();
+        this.creep.setParent(this);
+        this.shoot.setParent(this);
     }
 
     public getSize() {
@@ -38,6 +48,14 @@ export class Mario extends Phaser.GameObjects.Sprite {
       return this.allowJump;
     }
 
+    public creepPipes() {
+      this.creep.creep();
+    }
+
+    public setNextSpawn(position:number) {
+      this.creep.setSpawnX(position);
+    }
+
     public resetAllowJump() {
       this.isJumping = false;
       this.allowJump = 2;
@@ -53,6 +71,18 @@ export class Mario extends Phaser.GameObjects.Sprite {
 
     public setCreeping(state:boolean) {
       this.creeping = state;
+    }
+
+    public shootEnemy(velocity:number):Bullet {
+      let offset = 0;
+      if(this.size == 'small')
+        offset = 16;
+      let bullet = this.shoot.shoot(this.scene,this.x, this.y + offset,velocity );
+      return bullet;
+    }
+
+    public updateBullets() {
+      this.shoot.updateBullets();
     }
 
     private initSprite() {
